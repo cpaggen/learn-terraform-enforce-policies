@@ -2,13 +2,6 @@ import "tfplan/v2" as tfplan
 import "strings"
 import "types"
 
-allBDs = filter tfplan.resource_changes as address, rc {
-  	rc.type is "aci_bridge_domain" and
-  	rc.mode is "managed" and
-  	(rc.change.actions contains "create" or rc.change.actions contains "update" or
-     rc.change.actions contains "read" or rc.change.actions contains "no-op")
-  }
-
 filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
   violators = {}
 	messages = {}
@@ -74,6 +67,53 @@ evaluate_attribute = func(r, attribute) {
   }
 }
 
+to_string = func(obj) {
+  case types.type_of(obj) {
+    when "string":
+      return obj
+    when "int", "float", "bool":
+      return string(obj)
+    when "null":
+      return "null"
+    when "undefined":
+      return "undefined"
+    when "list":
+      output = "["
+      lastIndex = length(obj) - 1
+      for obj as index, value {
+        if index < lastIndex {
+          output += to_string(value) + ", "
+        } else {
+          output += to_string(value)
+        }
+      }
+      output += "]"
+      return output
+    when "map":
+      output = "{"
+      theKeys = keys(obj)
+      lastIndex = length(theKeys) - 1
+      for theKeys as index, key {
+        if index < lastIndex {
+          output += to_string(key) + ": " + to_string(obj[key]) + ", "
+        } else {
+          output += to_string(key) + ": " + to_string(obj[key]) + "}"
+        }
+      }
+      return output
+    else:
+      return ""
+  }
+}
+
+#### POLICY STARTS HERE ####
+
+allBDs = filter tfplan.resource_changes as address, rc {
+  	rc.type is "aci_bridge_domain" and
+  	rc.mode is "managed" and
+  	(rc.change.actions contains "create" or rc.change.actions contains "update" or
+     rc.change.actions contains "read" or rc.change.actions contains "no-op")
+  }
 
 violatingBDs = filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)                      
