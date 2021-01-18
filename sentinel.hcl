@@ -1,3 +1,3 @@
-policy "allowed-terraform-version" {
+policy "check-bd-descriptions" {
   enforcement_level = "soft-mandatory"
 }
