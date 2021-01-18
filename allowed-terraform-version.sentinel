@@ -1,5 +1,10 @@
 import "tfplan"
 
+allBDs = plan.find_resources("aci_bridge_domain")
+violatingBDs = plan.filter_attribute_does_not_match_regex(allBDs,
+                      "description", "^demo(.+)", true)                      
+
+
 main = rule {
-  tfplan.terraform_version matches "^0\\.14\\.\\d+$" 
+  length(violatingBDs["messages"]) is 0
 }
