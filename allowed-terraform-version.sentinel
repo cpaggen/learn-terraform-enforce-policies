@@ -29,7 +29,7 @@ filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
   return {"resources":violators,"messages":messages}
 }
 
-violatingBDs = tfplan.filter_attribute_does_not_match_regex(allBDs,
+violatingBDs = filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)                      
 
 main = rule {
