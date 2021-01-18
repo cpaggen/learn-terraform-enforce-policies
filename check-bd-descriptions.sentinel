@@ -1,7 +1,7 @@
 import "tfplan/v2" as tfplan
 import "strings"
 import "types"
-import "modules/utils"
+import "utils"
 
 filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
   violators = {}
