@@ -1,11 +1,7 @@
-module "tfplan-functions" {
-  source = "https://github.com/hashicorp/terraform-guides/blob/master/governance/third-generation/common-functions/tfplan-functions/tfplan-functions.sentinel"
-}
+import "tfplan/v2" as tfplan
 
-import "tfplan-functions" as plan
-
-allBDs = plan.find_resources("aci_bridge_domain")
-violatingBDs = plan.filter_attribute_does_not_match_regex(allBDs,
+allBDs = tfplan.find_resources("aci_bridge_domain")
+violatingBDs = tfplan.filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)                      
 
 
