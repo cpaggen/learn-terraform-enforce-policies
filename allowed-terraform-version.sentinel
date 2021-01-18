@@ -1,4 +1,4 @@
-import "tfplan" as plan
+import "tfplan-functions" as plan
 
 allBDs = plan.find_resources("aci_bridge_domain")
 violatingBDs = plan.filter_attribute_does_not_match_regex(allBDs,
