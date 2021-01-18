@@ -1,5 +1,9 @@
-module {
-    source = "git::https://raw.githubusercontent.com/hashicorp/terraform-guides/master/governance/third-generation/common-functions/tfplan-functions/tfplan-functions.sentinel"
+{
+"imports":{
+    "utils": {
+        "path": "https://raw.githubusercontent.com/hashicorp/terraform-guides/master/governance/third-generation/common-functions/tfplan-functions/tfplan-functions.sentinel"
+        }
+    }
 }
 
 import "tfplan/v2" as tfplan
