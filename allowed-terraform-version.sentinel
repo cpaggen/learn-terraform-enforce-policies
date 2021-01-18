@@ -1,4 +1,6 @@
 import "tfplan/v2" as tfplan
+import "strings"
+import "types"
 
 allBDs = filter tfplan.resource_changes as address, rc {
   	rc.type is "aci_bridge_domain" and
@@ -28,6 +30,50 @@ filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
   }
   return {"resources":violators,"messages":messages}
 }
+
+evaluate_attribute = func(r, attribute) {
+
+  # Split the attribute into a list, using "." as the separator
+  attributes = strings.split(attribute, ".")
+
+  # Convert numeric strings to integers for indices
+  if attributes[0] matches "^[0-9]+$" {
+    a = int(attributes[0])
+    # Make sure r is of type list
+    if types.type_of(r) is not "list" {
+      return undefined
+    }
+  } else {
+    a = attributes[0]
+  }
+
+  # Append the current attribute to the resource instance
+  if (types.type_of(r) is "map" and "change" in keys(r)) and
+     (types.type_of(r.change) is "map" and "after" in keys(r.change)) {
+    new_r = r.change.after[a] else null
+  } else {
+    new_r = r[a] else null
+  }
+
+  # Process based on length of attributes
+  # being greater than or equal to 1
+  if length(attributes) > 1 {
+
+    # Strip first element from attributes
+    attributes = attributes[1:length(attributes)]
+    attribute = strings.join(attributes, ".")
+
+    # Make recursive call
+    return evaluate_attribute(new_r, attribute)
+  } else {
+
+    # We reached the end of the attribute and can stop the
+    # recursive calls and return the value of the attribute
+    return new_r
+
+  }
+}
+
 
 violatingBDs = filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)                      
