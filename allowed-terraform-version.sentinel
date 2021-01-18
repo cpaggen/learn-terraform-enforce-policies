@@ -7,6 +7,28 @@ allBDs = filter tfplan.resource_changes as address, rc {
      rc.change.actions contains "read" or rc.change.actions contains "no-op")
   }
 
+filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
+  violators = {}
+	messages = {}
+  for resources as address, rc {
+    v = evaluate_attribute(rc, attr) else null
+    if v is null {
+      v = "null"
+    }
+    if v not matches expr {
+      # Add the resource and a warning message to the violators list
+      message = to_string(address) + " has " + to_string(attr) + " with value " +
+                to_string(v) + " that does not match the regex " + to_string(expr)
+      violators[address] = rc
+			messages[address] = message
+      if prtmsg {
+        print(message)
+      }
+    }
+  }
+  return {"resources":violators,"messages":messages}
+}
+
 violatingBDs = tfplan.filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)                      
 
