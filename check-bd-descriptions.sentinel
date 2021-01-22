@@ -1,8 +1,8 @@
-import "tfplan3rdgen" as mycode
+import "tfplan3rdgen" 
 
-allBDs = mycode.find_all_resources("aci_bridge_domain")
+allBDs = tfplan3rdgen.find_all_resources("aci_bridge_domain")
 
-violatingBDs = mycode.filter_attribute_does_not_match_regex(allBDs,
+violatingBDs = tfplan3rdgen.filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)                      
 
 main = rule {
