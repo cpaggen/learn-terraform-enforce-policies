@@ -1,4 +1,7 @@
-import "tfplan3rdgen" 
+
+import "tfplan/v2" as tfplan
+import "strings"
+import "types"
 
 filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
   violators = {}
@@ -116,3 +119,7 @@ allBDs = find_all_resources("aci_bridge_domain")
 
 violatingBDs = filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)           
+
+main = rule {
+  length(violatingBDs["messages"]) is 0
+}
