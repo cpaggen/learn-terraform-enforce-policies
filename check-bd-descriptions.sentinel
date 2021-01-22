@@ -115,7 +115,6 @@ allBDs = filter tfplan.resource_changes as address, rc {
   	(rc.change.actions contains "create" or rc.change.actions contains "update" or
      rc.change.actions contains "read" or rc.change.actions contains "no-op")
   }
-allBDs = find_all_resources("aci_bridge_domain")
 
 violatingBDs = filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)           
