@@ -2,7 +2,8 @@
 import "tfplan/v2" as tfplan
 import "strings"
 import "types"
-import "cfgfunc" as cpaggen
+import "cfgfunc" as configfunctions
+import "planfunc" as planfunctions
 
 filter_attribute_does_not_match_regex = func(resources, attr, expr, prtmsg) {
   violators = {}
@@ -119,6 +120,8 @@ allBDs = filter tfplan.resource_changes as address, rc {
 
 violatingBDs = filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)           
+
+foobar = planfunctions.filter_attribute_does_not_match_regex(allBDs, "description", "^test(.+)", true)
 
 main = rule {
   length(violatingBDs["messages"]) is 0
