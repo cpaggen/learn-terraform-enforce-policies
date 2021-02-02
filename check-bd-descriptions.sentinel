@@ -6,14 +6,7 @@ import "cfgfunc" as configfunctions
 import "planfunc" as planfunctions
 
 
-#### POLICY STARTS HERE ####
-
-allBDs = filter tfplan.resource_changes as address, rc {
-  	rc.type is "aci_bridge_domain" and
-  	rc.mode is "managed" and
-  	(rc.change.actions contains "create" or rc.change.actions contains "update" or
-     rc.change.actions contains "read" or rc.change.actions contains "no-op")
-  }
+allBDs = planfunctions.find_resources("aci_bridge_domain")
 
 violatingBDs = planfunctions.filter_attribute_does_not_match_regex(allBDs,
                       "description", "^demo(.+)", true)           
